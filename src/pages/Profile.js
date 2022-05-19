@@ -102,7 +102,7 @@ function Profile() {
   const onEdit = (listingId) => navigate(`/edit-listing/${listingId}`);
 
   return (
-    <div>
+    <div className="profile">
       <header className="profileHeader">
         <p className="pageHeader">My Profile</p>
         <button className="logOut" onClick={onLogout}>
