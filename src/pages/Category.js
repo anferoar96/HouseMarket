@@ -1,5 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   getDocs,
   query,
@@ -14,10 +15,11 @@ import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
 import ListingItem from "../components/ListingItem";
 
-function Offers() {
+function Category() {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [lastFetchListing, setLastFechListing] = useState(null);
+  const [lastFetch, setLastFetch] = useState(null);
+  const params = useParams();
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -26,14 +28,14 @@ function Offers() {
 
         const q = query(
           listingRef,
-          where("offer", "==", true),
+          where("type", "==", params.categoryName),
           orderBy("timestamp", "desc"),
           limit(10)
         );
         const querySnap = await getDocs(q);
 
         const lastVisible = querySnap.docs[querySnap.docs.length - 1];
-        setLastFechListing(lastVisible);
+        setLastFetch(lastVisible);
 
         let listings = [];
 
@@ -50,23 +52,24 @@ function Offers() {
       }
     };
     fetchListings();
-  }, []);
+  }, [params.categoryName]);
 
+  //Pagination /Load more
   const onFetchMoreListings = async () => {
     try {
       const listingRef = collection(db, "listings");
 
       const q = query(
         listingRef,
-        where("offer", "==", true),
+        where("type", "==", params.categoryName),
         orderBy("timestamp", "desc"),
-        startAfter(lastFetchListing),
+        startAfter(lastFetch),
         limit(10)
       );
       const querySnap = await getDocs(q);
 
       const lastVisible = querySnap.docs[querySnap.docs.length - 1];
-      setLastFechListing(lastVisible);
+      setLastFetch(lastVisible);
 
       let listings = [];
 
@@ -86,7 +89,11 @@ function Offers() {
   return (
     <div className="category">
       <header>
-        <p className="pageHeader">Offers</p>
+        <p className="pageHeader">
+          {params.categoryName === "rent"
+            ? "Places for rent"
+            : "Places for sale"}
+        </p>
       </header>
       {loading ? (
         <Spinner />
@@ -105,17 +112,17 @@ function Offers() {
           </main>
           <br />
           <br />
-          {lastFetchListing && (
+          {lastFetch && (
             <p className="loadMore" onClick={onFetchMoreListings}>
               Load More
             </p>
           )}
         </>
       ) : (
-        <p>There are no current offers</p>
+        <p>No listings for {params.categoryName}</p>
       )}
     </div>
   );
 }
 
-export default Offers;
+export default Category;

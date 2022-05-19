@@ -12,7 +12,7 @@ function Navbar() {
     const location=useLocation()
 
     const pathMatchRoute=(route)=>{
-        if(route==location.pathname){
+        if(route===location.pathname){
             return true
         }
     }
@@ -33,7 +33,7 @@ function Navbar() {
                 <p className={
                     pathMatchRoute('/offers')
                     ?'navbarListItemNameActive'
-                    :'navbarListItemName'}>Offer</p>
+                    :'navbarListItemName'}>Offers</p>
               </li>
               <li className="navbarListItem" onClick={()=> navigate('/profile')}>
                 <PersonOutlineIcon  fill={pathMatchRoute('/profile')?'#2c2c2c':'8f8f8f'} width='36px' height='36px'/>  
